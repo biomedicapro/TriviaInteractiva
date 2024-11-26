@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interactivo</title>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Quiz Interactivo</h1>
+        <form id="quizForm">
+            <div class="question">
+                <p>1. ¿Cuál es la capital de Francia?</p>
+                <label>
+                    <input type="radio" name="question1" value="París" required> París
+                </label><br>
+                <label>
+                    <input type="radio" name="question1" value="Madrid"> Madrid
+                </label><br>
+                <label>
+                    <input type="radio" name="question1" value="Roma"> Roma
+                </label>
+            </div>
+            <div class="question">
+                <p>2. ¿Cuál es 2 + 2?</p>
+                <label>
+                    <input type="radio" name="question2" value="3" required> 3
+                </label><br>
+                <label>
+                    <input type="radio" name="question2" value="4"> 4
+                </label><br>
+                <label>
+                    <input type="radio" name="question2" value="5"> 5
+                </label>
+            </div>
+            <button type="submit">Enviar Respuestas</button>
+        </form>
+    </div>
+
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCyE8ml-Q4G7c0lHHRQ-6bsyPbGIwU5EpM",
+            authDomain: "triviainteractiva.firebaseapp.com",
+            projectId: "triviainteractiva",
+            storageBucket: "triviainteractiva.firebasestorage.app",
+            messagingSenderId: "414005092944",
+            appId: "1:414005092944:web:6c222cebf22f8e25efe755",
+            measurementId: "G-53B0E4V1ZT"
+        };
+
+        // Inicializar Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Manejar el envío del formulario
+        document.getElementById('quizForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevenir recarga de página
+
+            // Obtener respuestas
+            const formData = new FormData(event.target);
+            const answers = {};
+            formData.forEach((value, key) => {
+                answers[key] = value;
+            });
+
+            // Guardar en Firebase
+            const userId = Date.now(); // ID único para el usuario
+            firebase.database().ref('quizResponses/' + userId).set(answers)
+                .then(() => {
+                    alert('Respuestas enviadas con éxito.');
+                    event.target.reset();
+                })
+                .catch((error) => {
+                    console.error('Error al guardar respuestas:', error);
+                    alert('Hubo un error al enviar las respuestas. Inténtalo nuevamente.');
+                });
+        });
+    </script>
+</body>
+</html>
